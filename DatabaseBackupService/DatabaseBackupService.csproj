@@ -51,8 +51,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoreApp">
-      <HintPath>D:\Mateen\New folder\CoreApp mateen\CoreApp\bin\x86\Debug\CoreApp.dll</HintPath>
+    <Reference Include="CoreApp, Version=3.0.0.9, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\CoreApp_DLLs.3.0.9\lib\CoreApp.dll</HintPath>
+    </Reference>
+    <Reference Include="CoreSys, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\CoreApp_DLLs.3.0.9\lib\CoreSys.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -85,6 +88,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
