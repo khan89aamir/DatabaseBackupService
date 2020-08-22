@@ -25,32 +25,34 @@ namespace DatabaseBackupService
             {
                 string myServiceName = System.Configuration.ConfigurationSettings.AppSettings["ServiceName"].ToString();
                 string status; //service status (For example, Running or Stopped)
-               
-                //display service status: For example, Running, Stopped, or Paused
-                ServiceController mySC = new ServiceController(myServiceName);
-                try
+                if (myServiceName.Length > 0)
                 {
-                    status = mySC.Status.ToString();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Service not found. It is probably not installed. [exception=" + ex.Message + "]");
-                    return;
-                }
-                //display service status: For example, Running, Stopped, or Paused
-                //MessageBox.Show("Service status : " + status);
-
-                //if service is Stopped or StopPending, you can run it with the following code.
-                if (mySC.Status.Equals(ServiceControllerStatus.Stopped) | mySC.Status.Equals(ServiceControllerStatus.StopPending))
-                {
+                    //display service status: For example, Running, Stopped, or Paused
+                    ServiceController mySC = new ServiceController(myServiceName);
                     try
                     {
-                        mySC.Start();
-                        mySC.WaitForStatus(ServiceControllerStatus.Running);
+                        status = mySC.Status.ToString();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error in starting the service: " + ex.Message);
+                        MessageBox.Show("Service not found. It is probably not installed. [exception=" + ex.Message + "]");
+                        return;
+                    }
+                    //display service status: For example, Running, Stopped, or Paused
+                    //MessageBox.Show("Service status : " + status);
+
+                    //if service is Stopped or StopPending, you can run it with the following code.
+                    if (mySC.Status.Equals(ServiceControllerStatus.Stopped) | mySC.Status.Equals(ServiceControllerStatus.StopPending))
+                    {
+                        try
+                        {
+                            mySC.Start();
+                            mySC.WaitForStatus(ServiceControllerStatus.Running);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error in starting the service: " + ex.Message);
+                        }
                     }
                 }
                 Application.EnableVisualStyles();

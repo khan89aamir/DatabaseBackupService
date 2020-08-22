@@ -23,7 +23,7 @@ namespace DatabaseBackupService
         string DatabaseName = string.Empty;
         int hr;
         int min;
-        DateTime backupTime;
+        DateTime backupTime,backupDate;
 
         public frmDatabackup()
         {
@@ -48,11 +48,11 @@ namespace DatabaseBackupService
                 int a = ObjDAL.UpdateData(DatabaseName + ".dbo.BackupConfig", "1=1");
                 if (a > 0)
                 {
-                    WriteBackupLog(DatabaseName, "Auto Backup is Running\n BackUp Status : Backup Success");
+                    WriteBackupLog(DatabaseName, "Backup Success");
                 }
                 else
                 {
-                    WriteBackupLog(DatabaseName, "Auto Backup is Running\n BackUp Status : Backup Faild");
+                    WriteBackupLog(DatabaseName, "Backup Faild");
                 }
 
                 System.Threading.Thread.Sleep(60000);
@@ -74,7 +74,7 @@ namespace DatabaseBackupService
                     //string arr = ObjDAL.ReadConStringFromFile(Application.StartupPath + "\\AppConfig/ServerConfig.sc", true);
                     //string[] a = arr.Split(new char[] { '=', ';' });
                     DatabaseName = ObjDAL.GetCurrentDBName(true);
-                    WriteBackupLog(DatabaseName, "Auto Backup Service is running");
+                    WriteBackupLog(DatabaseName, "Auto Backup Service is Started..");
 
                     LoadData();
                     timer1.Enabled = true;
@@ -82,7 +82,7 @@ namespace DatabaseBackupService
                 }
                 else
                 {
-                    WriteBackupLog(System.Environment.MachineName, "File is not exist for Auto Backup Service");
+                    WriteBackupLog(Environment.MachineName, "File is not exist for Auto Backup Service");
                     timer1.Stop();
                     this.Close();
                 }
@@ -100,9 +100,10 @@ namespace DatabaseBackupService
             try
             {
                 DataTable dt = ObjDAL.ExecuteSelectStatement("SELECT TOP 1 Path, CONVERT(date,Date) as Date, LTRIM(RIGHT(CONVERT(VARCHAR(20), Time, 100), 7)) AS Time FROM " + DatabaseName + ".dbo.BackupConfig WITH(NOLOCK)");
-                if (dt != null && dt.Rows.Count > 0)
+                if (ObjUtil.ValidateTable(dt))
                 {
                     strBackUpPath = dt.Rows[0]["Path"].ToString();
+                    backupDate = Convert.ToDateTime(dt.Rows[0]["Date"]);
                     backupTime = Convert.ToDateTime(dt.Rows[0]["Time"]);
                     hr = backupTime.Hour;
                     min = backupTime.Minute;
@@ -126,7 +127,7 @@ namespace DatabaseBackupService
         {
             try
             {
-                if (DateTime.Now.Hour == hr && DateTime.Now.Minute == min)
+                if ((DateTime.Now.Hour == hr && DateTime.Now.Minute == min) || backupDate.ToString("yyyy-MM-dd")!=DateTime.Now.ToString("yyyy-MM-dd"))
                 {
                     BackUpDatabase();
                     timer1.Stop();
