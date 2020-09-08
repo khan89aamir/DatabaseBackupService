@@ -69,23 +69,24 @@ namespace DatabaseBackupService
             {
                 this.Size = new Size(1, 1);
                 this.Hide();
-                //if (File.Exists(Application.StartupPath + "\\AppConfig/ServerConfig.sc"))
-                //{
-                    //string arr = ObjDAL.ReadConStringFromFile(Application.StartupPath + "\\AppConfig/ServerConfig.sc", true);
-                    //string[] a = arr.Split(new char[] { '=', ';' });
-                    DatabaseName = ObjDAL.GetCurrentDBName(true);
+                if (File.Exists(Application.StartupPath + "\\AppConfig/ServerConfig.sc"))
+                {
+                    string arr = ObjDAL.ReadConStringFromFile(Application.StartupPath + "\\AppConfig/ServerConfig.sc", true);
+                    string[] a = arr.Split(new char[] { '=', ';' });
+                    DatabaseName = a[3].ToString();
+                    //DatabaseName = ObjDAL.GetCurrentDBName(true);
                     WriteBackupLog(DatabaseName, "Auto Backup Service is Started..");
 
                     LoadData();
                     timer1.Enabled = true;
                     timer1.Start();
-                //}
-                //else
-                //{
-                //    WriteBackupLog(Environment.MachineName, "File is not exist for Auto Backup Service");
-                //    timer1.Stop();
-                //    this.Close();
-                //}
+                }
+                else
+                {
+                    WriteBackupLog(Environment.MachineName, "File is not exist for Auto Backup Service");
+                    timer1.Stop();
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
